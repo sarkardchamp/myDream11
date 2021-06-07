@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Test Page</title>
+	<meta charset="utf-8">
+	<title>Html Page</title>
+	<style type="text/css">
+		.container {
+			width: 80%;
+			margin: auto;
+			padding-top: 60px;
+		}
+
+		#player_display {
+			visibility: hidden;
+		}
+		label {
+			width: 200px;
+		}
+		input[type=text] {
+			display: block;
+			width: 400px;
+		}
+	</style>
+	<style type="text/css">
+		.container {
+			width: 80%;
+			margin: auto;
+			overflow: auto;
+		}
+		th {
+			color: white;
+			background-color: limegreen;
+		}
+		tr:nth-child(even) {
+			background-color: #eaeaea;
+		}
+		tr:hover {
+			cursor: pointer;
+			background-color: #a4f582;
+		}
+		th:hover {
+			cursor: context-menu;
+		}
+		table {
+			box-sizing: border-box;
+			float: left;
+			width: 48%;
+			margin: 0% 1%;
+		}
+		table,tr,td,th {
+			border: 1px solid #000;
+			border-collapse: collapse;
+		}
+		th,td {
+			padding: 5px;
+
+		}
+		tr > td:nth-child(4) {
+			text-align: center;
+			font-style: bold;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>Test Page Heading</h1>
+		<form method="POST">
+			<p id="error" style="color: red; height: 20px;"></p>
+			<label for="np">Enter New Password:</label>
+			<input type="text" name="newPassword" id="np">
+			<br>
+			<label for="rep">Re-enter Password:</label>
+			<input type="text" name="password" id="rep">
+			<br>
+			<input type="submit" name="updatePass" value="Update Password" disabled="disabled" id="up">
+		</form>
+
+		<h2>Clickable Table</h2>
+		<p>Aim: Clicking any row should copy the entire row to a new table. Clicking it back should remove it from the new table</p>
+		<table>
+			<thead>
+				<th>S. No.</th>
+				<th>Player Name</th>
+				<th colspan="2">Credit Value</th>
+			</thead>
+			<tbody>
+				<tr onclick="myfunction(this);">
+					<td>1</td>
+					<td>S Ganguli</td>
+					<td>9.7</td>
+					<td class="sign">+</td>
+				</tr>
+				<tr onclick="myfunction(this);">
+					<td>2</td>
+					<td>MS Dhoni</td>
+					<td>12.0</td>
+					<td class="sign">+</td>
+				</tr>
+				<tr onclick="myfunction(this);">
+					<td>3</td>
+					<td>HB Singh</td>
+					<td>11.3</td>
+					<td class="sign">+</td>
+				</tr>
+				<tr onclick="myfunction(this);">
+					<td>4</td>
+					<td>D Karthik</td>
+					<td>10.7</td>
+					<td class="sign">+</td>
+				</tr>
+				<tr onclick="myfunction(this);">
+					<td>5</td>
+					<td>V Sehwag</td>
+					<td>11.8</td>
+					<td class="sign">+</td>
+				</tr>
+			</tbody>
+		</table>
+		<table id="result"></table>
+	</div>
+	<script type="text/javascript">
+		var newP = document.getElementById('np');
+		var reP = document.getElementById('rep');
+		var btn = document.getElementById('up');
+		var err = document.getElementById('error')
+		newP.addEventListener("focusout",checkLength);
+		reP.addEventListener("focusout",matchPassword);
+		function checkLength() {
+			if(newP.value.length < 4) {
+				err.innerHTML = "Password should be atleast 4 characters long";
+				btn.setAttribute("disabled","disabled");
+				return false;
+			} if (reP.value.length > 1) {
+				return matchPassword();
+			}
+			err.innerHTML = "";
+			return true;
+		}
+		function matchPassword() {
+			var nptext = newP.value;
+			var reptext = reP.value;
+			if(nptext != reptext){
+				err.innerHTML = "Password mismatch!";
+				btn.setAttribute("disabled","disabled");
+				return false;
+			}
+			err.innerHTML = "";
+			btn.removeAttribute("disabled");
+			return true;
+		}
+	</script>
+	<script type="text/javascript">
+		var totalCredit = 0;
+		var chosenPlayers = [];
+		function myfunction(row) {
+			var trData = row.getElementsByTagName('td');
+			var pData = {name:trData[1].innerHTML, credit:trData[2].innerHTML};
+			if(trData[3].innerHTML == '+') {
+				chosenPlayers.push(pData);
+				totalCredit += Number(pData.credit);
+				trData[3].innerHTML = '-';
+			} else {
+				let i = 0;
+				while(chosenPlayers[i].name != pData.name) i++;
+				for( ;i < chosenPlayers.length - 1; i++){
+					chosenPlayers[i] = chosenPlayers[i+1];
+				}
+				chosenPlayers.pop();
+				totalCredit -= Number(pData.credit);
+				trData[3].innerHTML = '+';
+			}
+			var txt = "";
+			for (var i = 0; i < chosenPlayers.length; i++) {
+				var player = chosenPlayers[i];
+				txt += ("<tr><td>" + player.name + "</td><td>" + player.credit + "</td></tr>");
+			}
+			document.getElementById('result').innerHTML = txt;
+		}
+	</script>
+</body>
+</html>
