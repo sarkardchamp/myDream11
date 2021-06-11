@@ -90,7 +90,7 @@ if(isset($_POST['verifyOtp'])) {
 				<label for="email">Email:</label><input type="text" name="email" id="email">
 				<label for="mobile">Mobile:</label><input type="text" name="mobile" id="mobile">
 				<label for="password">Password:</label><input type="text" name="pass" id="password">
-				<p style="margin-top: 10px;"><input type="submit" name="signUp" value="Request OTP"> <a href="index.php">Cancel</a></p>
+				<p style="margin-top: 10px;"><input type="submit" name="signUp" value="Request OTP">&nbsp;<a href="index.php">Cancel</a></p>
 			</form>
 		<?php } else { ?> 
 			<form method="POST">

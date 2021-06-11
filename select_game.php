@@ -1,6 +1,7 @@
 <?php  
 require_once('pdo.php');
 session_start();
+sleep(1);
 if(!isset($_SESSION['match_id'])) {
 	$_SESSION['match_id'] = rand(1,231);
 }

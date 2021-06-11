@@ -34,10 +34,11 @@ if(!isset($_SESSION['id'])) {
 			// echo '<p style="color:#00ff00;">'.$_SESSION['success']."</p>";
 			unset($_SESSION['success']);
 		} ?>
+		<div class="loaderSpin"></div>
 		<h1>Hello <?php echo $row['name']; ?><br>Welcome to My Dream11</h1>
 		<button id="matchSelection" >Select a Random Match</button>
 		<button id="player_display">View Players</button>
-		<button id="match_display">Begin Match</button>
+		<button id="match_display" class="disabled">Begin Match</button>
 		<div id="credit">
 			Credits: <span id="creVal">100</span>
 		</div>
@@ -58,7 +59,16 @@ if(!isset($_SESSION['id'])) {
 		var target = document.getElementById('match');
 		var mCustomTeam = [];
 
+		function loaderFunction() {
+			var spinner = document.querySelector(".loaderSpin");
+			if(spinner.style.display == "block") {
+				spinner.style.display = "none";
+			} else {
+				spinner.style.display = "block";
+			}
+		}
 		function selectMatch() {
+			loaderFunction();
 			if(matchJSON.length < 1) {
 				xhttp.onreadystatechange = function (data) {
 					if(this.readyState == 4 && this.status == 200) {
@@ -155,15 +165,15 @@ if(!isset($_SESSION['id'])) {
 					for (var i = 0; i < remPlayers.length; i++) {
 						mPlayers.push(remPlayers[i]);
 					}
-					console.log("players list:\n" + mPlayers + "\n num of players: " + mPlayers.length);
+					// console.log("players list:\n" + mPlayers + "\n num of players: " + mPlayers.length);
 				}
 			}
 			xhttp.open("POST","select_players.php",true);
 			xhttp.setRequestHeader("Content-type","application/json");
 			xhttp.send(playerJSON);
-
 		}
 		function renderMatch() {
+			loaderFunction();
 			var heading = document.createElement('h3');
 			var venue = document.createElement('p');
 			var matchType = document.createElement('div');
@@ -177,7 +187,6 @@ if(!isset($_SESSION['id'])) {
 			var img2 = document.createElement('img');
 			var para1 = document.createElement('h4');
 			var para2 = document.createElement('h4');
-			var playerTable = document.createElement('table');
 
 
 			heading.innerHTML = "Match Details";
@@ -190,7 +199,6 @@ if(!isset($_SESSION['id'])) {
 			matchType.appendChild(matchTypeP);
 			matchType.appendChild(imgMatch);
 			node.setAttribute("class","teams");
-			playerTable.id = "players";
 			img1.alt = mTeams[0] + ' logo';
 			img2.alt = mTeams[1] + ' logo';
 			img1.src = "images/" + mTeams[0] + ".png";
@@ -213,9 +221,9 @@ if(!isset($_SESSION['id'])) {
 			target.appendChild(matchType);
 			target.appendChild(venue);
 			target.appendChild(node);
-			target.appendChild(playerTable);
 		}
 		function preparePlayerData() {
+			loaderFunction();
 			playerJSON = JSON.stringify(mPlayers);
 			var xhttpPdata = new XMLHttpRequest();
 			xhttpPdata.onreadystatechange = function() {
@@ -231,8 +239,16 @@ if(!isset($_SESSION['id'])) {
 			xhttpPdata.send(playerJSON);
 		}
 		function displayPlayers() {
+			loaderFunction();
 			document.getElementById('player_display').style.display = "none";
-			document.getElementById('match_display').style.visibility = "visible";
+			document.getElementById('match_display').style.display = "inline";
+			var heading = document.createElement('h3');
+			heading.id = "heading";
+			heading.innerText = "Click on the names to create your Team";
+			var playerTable = document.createElement('table');
+			playerTable.id = "players";
+			target.appendChild(heading);
+			target.appendChild(playerTable);
 			var tbl = document.getElementById('players');
 			tbl.setAttribute("class","tbl");
 			tbl.setAttribute("id","tbl");
@@ -252,13 +268,13 @@ if(!isset($_SESSION['id'])) {
 			teamCnf.id = "team_confirmation";
 			teamCnf.disabled = "disabled";
 			teamCnf.class = "disabled";
-			teamCnf.innerHTML = 'Confirm Team';
+			teamCnf.style = "margin:10px;";
+			teamCnf.innerHTML = 'Confirm Players';
 			teamTable.innerHTML = '';
 
 			teamDiv.appendChild(teamTable);
 			teamDiv.appendChild(teamCnf);
 			target.appendChild(teamDiv);
-
 		}
 		function addToTeam(row) {
 			var rows = document.getElementById('tbl').getElementsByTagName('tr');
@@ -268,7 +284,7 @@ if(!isset($_SESSION['id'])) {
 			var tbl = teamDiv.getElementsByTagName('table')[0];
 
 			var trData = row.getElementsByTagName('td');
-			var pData = {name:trData[1].innerText,credit:Number(trData[2].innerText)};
+			var pData = {name:trData[1].innerText,credit:Number(trData[2].innerText),points:1};
 
 			if(trData[3].innerText == '+' && creditVal.innerText-pData.credit>=0 && mCustomTeam.length < 11) {
 				mCustomTeam.push(pData);
@@ -293,7 +309,7 @@ if(!isset($_SESSION['id'])) {
 				txt += ('<tr><td>' + mCustomTeam[i].name + '</td><td>' + mCustomTeam[i].credit + '</td></tr>');
 			}
 			txt += '</tbody>';
-			console.log(txt);
+			// console.log(txt);
 			tbl.innerHTML = txt;
 			if(mCustomTeam.length == 0) {
 				teamDiv.style.display = "none";
@@ -309,7 +325,6 @@ if(!isset($_SESSION['id'])) {
 				btn.setAttribute("class","disabled");
 			}
 
-
 			for(let i = 1; i < rows.length; i++) {
 				var rowData = rows[i];
 				var tds = rowData.getElementsByTagName('td');
@@ -321,7 +336,110 @@ if(!isset($_SESSION['id'])) {
 					rows[i].removeAttribute("class");
 				}
 			}
+			btn.addEventListener("click", displayCustomTeamC);
+		}
+		function displayCustomTeamC() {
+			document.getElementById('tbl').style.display = "none";
+			document.getElementById('teamTable').style.display = "none";
+			document.getElementById('team_confirmation').style.display = "none";
+			document.getElementById('credit').style.display = "none";
 
+			var captainSelection = document.createElement('div');
+			captainSelection.id = "captainSelection";
+			captainSelection.setAttribute("class","capSelect");
+			var heading = document.getElementById('heading');
+			var tbl = document.createElement('table');
+
+			heading.innerText = "Click on the name of the player to select as the Captain";
+			tbl.id = "customTeam";
+			var txt = '<thead><tr><th>S. No.</th><th>Name</th></tr></thead><tbody>';
+			for(let i = 0; i < mCustomTeam.length; i++) {
+				txt += ('<tr><td>' + (i+1) + '</td><td onclick="selectCaptain(this);">' + mCustomTeam[i].name + '</td></tr>');
+			}
+			txt += '</tbody>';
+			tbl.innerHTML = txt;
+			var btnNext = document.createElement('button');
+			var btnPrev = document.createElement('button');
+			btnNext.style.float = "right";
+			btnNext.innerHTML = "Confirm Captain and Select Vice-Captain";
+			btnNext.setAttribute("class","disabled");
+			btnNext.id = "selectViceCaptain";
+			btnPrev.style.float = "left";
+			btnPrev.innerHTML = "Back to Team Selection";
+
+			captainSelection.appendChild(tbl);
+			captainSelection.appendChild(btnPrev);
+			captainSelection.appendChild(btnNext);
+
+			target.appendChild(captainSelection);
+			btnPrev.addEventListener("click", function() {
+				document.getElementById('tbl').removeAttribute("style");
+				document.getElementById('teamTable').style.display = "block";
+				document.getElementById('team_confirmation').removeAttribute("style");
+				document.getElementById('credit').style.display = "block";
+				captainSelection.remove();
+			});
+
+			btnNext.addEventListener("click", function() {
+				captainSelection.style.display = "none";
+				var vCaptainSelection = document.createElement('div');
+				vCaptainSelection.setAttribute("class","capSelect");
+				vCaptainSelection.id = "vCaptainSelection";
+				heading.innerText = "Click on the name of the player to select as the Vice-Captain";
+				var atbl = document.createElement('table');
+				var atxt = '<thead><tr><th>S. No.</th><th>Name</th></tr></thead><tbody>';
+				for(let i = 0; i < mCustomTeam.length; i++) {
+					if(mCustomTeam[i].points != 2) {
+						atxt += ('<tr><td>'+(i+1)+'</td><td onclick="selectVCaptain(this);">'+mCustomTeam[i].name+'</td></tr>');
+					}
+				}
+				atxt += '</tbody>';
+				atbl.innerHTML = atxt;
+				var backCaptainSelection = document.createElement('button');
+				backCaptainSelection.innerText = "Back to Captain Selection";
+				backCaptainSelection.style.float = "left";
+
+				var previewTeam = document.createElement('button');
+				previewTeam.id = "previewTeam";
+				previewTeam.innerText = "Preview Your Team";
+				previewTeam.style.float = "right";
+				previewTeam.setAttribute("class","disabled");
+
+				vCaptainSelection.appendChild(atbl);
+				vCaptainSelection.appendChild(backCaptainSelection);
+				vCaptainSelection.appendChild(previewTeam);
+
+				target.appendChild(vCaptainSelection);
+				backCaptainSelection.addEventListener("click", function(){
+					captainSelection.style.display = "block";
+					vCaptainSelection.remove();
+				});
+			});
+		}
+		function selectCaptain(row) {
+			var captain = row.innerText;
+			// console.log(captain);
+			for(let i = 0; i < mCustomTeam.length; i++) {
+				if(mCustomTeam[i].name == captain) {
+					mCustomTeam[i].points = 2;
+					document.getElementById('selectViceCaptain').removeAttribute("class");
+				} else if(mCustomTeam[i].points == 2) {
+					mCustomTeam[i].points = 1;
+				}
+			}
+			console.log(mCustomTeam);
+		}
+		function selectVCaptain(row) {
+			var vCaptain = row.innerText;
+			for(let i = 0; i < mCustomTeam.length; i++) {
+				if(mCustomTeam[i].name == vCaptain) {
+					mCustomTeam[i].points = 1.5;
+					document.getElementById('previewTeam').removeAttribute("class");
+				} else if(mCustomTeam[i].points == 1.5) {
+					mCustomTeam[i].points = 1;
+				}
+			}
+			console.log(mCustomTeam);
 		}
 
 	</script>

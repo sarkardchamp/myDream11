@@ -1,6 +1,7 @@
 <?php
 require_once 'pdo.php';
 session_start();
+sleep(1);
 if(!isset($_SESSION['playerDataSet'])) {
 	$_SESSION['playerDataSet'] = true;
 }

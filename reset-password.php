@@ -101,7 +101,7 @@ if(isset($_POST['updatePass'])) {
 				<label for="rep">Re-enter Password:</label>
 				<input type="text" name="password" id="rep">
 				<p><input type="submit" name="updatePass" value="Update Password" disabled="disabled" id="up"> 
-					 <a href="index.php">Cancel</a></p>
+					&nbsp;&nbsp;<a href="index.php">Cancel</a></p>
 			</form>
 		<?php } ?>
 	</div>

@@ -62,7 +62,7 @@ if(isset($_POST['login'])) {
 			<input type="text" name="emmob" placeholder="your email / mob no." id="emmob"><br>
 			<label for="password">Password:</label>
 			<input type="password" name="pass" id="password">
-			<p style="margin-top: 10px;"><input type="submit" name="login" value="Login"> or <a href="index.php">Cancel</a></p>
+			<p style="margin-top: 10px;"><input type="submit" name="login" value="Login">&nbsp;or <a href="index.php">Cancel</a></p>
 			<br><br>
 			<p>Forgot Password? <a href="reset-password.php">Reset here</a></p>
 			<p>New to My Dream11? <a href="sign-up.php">create a new account.</a></p>

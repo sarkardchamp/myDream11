@@ -61,6 +61,24 @@
 			text-align: center;
 			font-style: bold;
 		}
+
+		.loaderSpin {
+			border: 8px solid #f3f3f3; /* Light grey */
+			border-top: 8px solid #fa7878;
+			border-radius: 50%;
+			width: 30px;
+			height: 30px;
+			position: fixed;
+			overflow: auto;
+			display: none;
+			top: 30px;
+			left: 48%;
+			animation: spin 1s linear infinite;
+		}
+		@keyframes spin {
+			0% { transform: rotate(0deg); }
+			100% { transform: rotate(360deg); }
+		}
 	</style>
 </head>
 <body>
@@ -78,6 +96,7 @@
 		</form>
 
 		<h2>Clickable Table</h2>
+		<div class="loaderSpin"></div>
 		<p>Aim: Clicking any row should copy the entire row to a new table. Clicking it back should remove it from the new table</p>
 		<table>
 			<thead>
@@ -156,6 +175,12 @@
 		var chosenPlayers = [];
 		function myfunction(row) {
 			var trData = row.getElementsByTagName('td');
+			var spinner = document.querySelector(".loaderSpin");
+			if(spinner.style.display == "block") {
+				spinner.style.display = "none";
+			} else {
+				spinner.style.display = "block";
+			}
 			var pData = {name:trData[1].innerHTML, credit:trData[2].innerHTML};
 			if(trData[3].innerHTML == '+') {
 				chosenPlayers.push(pData);

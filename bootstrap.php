@@ -90,17 +90,35 @@ nav button:hover, nav button:active, nav a:hover, nav a:active {
 	position: relative;
 }
 #match_display {
-	visibility: hidden;
+	display: none;
 }
-button {
+.loaderSpin {
+	border: 8px solid #f3f3f3; /* Light grey */
+	border-top: 8px solid #8c0606;
+	border-radius: 50%;
+	width: 30px;
+	height: 30px;
+	position: fixed;
+	overflow: auto;
+	display: none;
+	top: 80px;
+	left: 48%;
+	animation: spin 1s linear infinite;
+}
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+button, input[type=submit] {
 	padding: 6px 10px;
 	color: #fff;
 	border: 0px;
 	border-radius: 10px;
 	background-color: #a80505;
+	margin: 10px;
 	box-shadow: 0px 0px 10px 2px #555;
 }
-button:active {
+button:active, input[type=submit]:active {
 	box-shadow: -1px -1px 3px 2px #3d0906 inset;
 }
 input[type=text], input[type=email], input[type=password], input[type=number] {
@@ -224,6 +242,14 @@ button.disabled {
 }
 #teamTable {
 	display: none;
+}
+.capSelect {
+	float: none;
+	overflow: auto;
+}
+.capSelect > table {
+	width: 70%;
+	margin: 10px 15%;
 }
 @media screen and (max-width: 768px) {
 	table {
