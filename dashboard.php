@@ -42,9 +42,8 @@ if(!isset($_SESSION['id'])) {
 		<div id="credit">
 			Credits: <span id="creVal">100</span>
 		</div>
-		<div id="match">
-
-		</div>
+		<div id="match"></div>
+		<div id="playersData"></div>
 	</div>
 	<script type="text/javascript">
 		document.getElementById('matchSelection').addEventListener("click", selectMatch);
@@ -57,6 +56,7 @@ if(!isset($_SESSION['id'])) {
 		var mPlayerData;
 		var xhttp = new XMLHttpRequest();
 		var target = document.getElementById('match');
+		var targetPlayers = document.getElementById('playersData');
 		var mCustomTeam = [];
 
 		function loaderFunction() {
@@ -244,6 +244,7 @@ if(!isset($_SESSION['id'])) {
 			document.getElementById('match_display').style.display = "inline";
 			var heading = document.createElement('h3');
 			heading.id = "heading";
+			heading.style.textAlign = "center";
 			heading.innerText = "Click on the names to create your Team";
 			var playerTable = document.createElement('table');
 			playerTable.id = "players";
@@ -256,7 +257,8 @@ if(!isset($_SESSION['id'])) {
 			for (var i = 0; i < mPlayerData.length; i++) {
 				var player = mPlayerData[i];
 				// console.log(player);
-				txt += '<tr onclick="addToTeam(this);"><td>' + (i+1) + '</td><td>' + player["Players"] + '</td><td>' + player["Credit Value"] + '</td><td>' + '+' + '</td></tr>';
+				txt += '<tr onclick="addToTeam(this);"><td>' + (i+1) + '</td><td>' + 
+				player["Players"] + '</td><td>' + player["Credit Value"] + '</td><td>' + '+' + '</td></tr>';
 			}
 			txt += '</tbody>';
 			tbl.innerHTML = txt;
@@ -304,9 +306,9 @@ if(!isset($_SESSION['id'])) {
 				row.removeAttribute("title");
 				creditVal.innerText = (Number(creditVal.innerText) + pData.credit).toFixed(1);
 			}
-			var txt = '<thead><tr><th>Player</th><th>Credit</th></tr></thead><tbody>';
+			var txt = '<thead><tr><th>S. No.</th><th>Player</th><th>Credit</th></tr></thead><tbody>';
 			for(let i = 0; i < mCustomTeam.length; i++) {
-				txt += ('<tr><td>' + mCustomTeam[i].name + '</td><td>' + mCustomTeam[i].credit + '</td></tr>');
+				txt += ('<tr><td>' + (i+1) + '</td><td>' + mCustomTeam[i].name + '</td><td>' + mCustomTeam[i].credit + '</td></tr>');
 			}
 			txt += '</tbody>';
 			// console.log(txt);
@@ -349,6 +351,8 @@ if(!isset($_SESSION['id'])) {
 			captainSelection.setAttribute("class","capSelect");
 			var heading = document.getElementById('heading');
 			var tbl = document.createElement('table');
+			var p = document.createElement('p');
+			p.innerHTML = 'Captain: <span class="name"><span>';
 
 			heading.innerText = "Click on the name of the player to select as the Captain";
 			tbl.id = "customTeam";
@@ -361,17 +365,19 @@ if(!isset($_SESSION['id'])) {
 			var btnNext = document.createElement('button');
 			var btnPrev = document.createElement('button');
 			btnNext.style.float = "right";
-			btnNext.innerHTML = "Confirm Captain and Select Vice-Captain";
+			btnNext.innerHTML = "Confirm Captain";
 			btnNext.setAttribute("class","disabled");
 			btnNext.id = "selectViceCaptain";
 			btnPrev.style.float = "left";
-			btnPrev.innerHTML = "Back to Team Selection";
+			btnPrev.innerHTML = "Back";
 
+			captainSelection.appendChild(p);
 			captainSelection.appendChild(tbl);
 			captainSelection.appendChild(btnPrev);
 			captainSelection.appendChild(btnNext);
 
-			target.appendChild(captainSelection);
+			targetPlayers.appendChild(captainSelection);
+
 			btnPrev.addEventListener("click", function() {
 				document.getElementById('tbl').removeAttribute("style");
 				document.getElementById('teamTable').style.display = "block";
@@ -388,15 +394,21 @@ if(!isset($_SESSION['id'])) {
 				heading.innerText = "Click on the name of the player to select as the Vice-Captain";
 				var atbl = document.createElement('table');
 				var atxt = '<thead><tr><th>S. No.</th><th>Name</th></tr></thead><tbody>';
+				var j = 0;
 				for(let i = 0; i < mCustomTeam.length; i++) {
 					if(mCustomTeam[i].points != 2) {
-						atxt += ('<tr><td>'+(i+1)+'</td><td onclick="selectVCaptain(this);">'+mCustomTeam[i].name+'</td></tr>');
+						j++;
+						atxt += ('<tr><td>'+(j)+'</td><td onclick="selectVCaptain(this);">'+mCustomTeam[i].name+'</td></tr>');
 					}
 				}
 				atxt += '</tbody>';
 				atbl.innerHTML = atxt;
+
+				var ap = document.createElement('p');
+				ap.innerHTML = 'Vice-Captain: <span class="name"></span>';
+
 				var backCaptainSelection = document.createElement('button');
-				backCaptainSelection.innerText = "Back to Captain Selection";
+				backCaptainSelection.innerText = "Back";
 				backCaptainSelection.style.float = "left";
 
 				var previewTeam = document.createElement('button');
@@ -405,20 +417,24 @@ if(!isset($_SESSION['id'])) {
 				previewTeam.style.float = "right";
 				previewTeam.setAttribute("class","disabled");
 
+				vCaptainSelection.appendChild(ap);
 				vCaptainSelection.appendChild(atbl);
 				vCaptainSelection.appendChild(backCaptainSelection);
 				vCaptainSelection.appendChild(previewTeam);
 
-				target.appendChild(vCaptainSelection);
+				targetPlayers.appendChild(vCaptainSelection);
 				backCaptainSelection.addEventListener("click", function(){
 					captainSelection.style.display = "block";
 					vCaptainSelection.remove();
 				});
+
+				previewTeam.addEventListener("click", teamPreview);
 			});
 		}
 		function selectCaptain(row) {
 			var captain = row.innerText;
-			// console.log(captain);
+			var sp = document.getElementById('captainSelection').getElementsByTagName('span')[0];
+			sp.innerText = captain;
 			for(let i = 0; i < mCustomTeam.length; i++) {
 				if(mCustomTeam[i].name == captain) {
 					mCustomTeam[i].points = 2;
@@ -427,10 +443,11 @@ if(!isset($_SESSION['id'])) {
 					mCustomTeam[i].points = 1;
 				}
 			}
-			console.log(mCustomTeam);
 		}
 		function selectVCaptain(row) {
 			var vCaptain = row.innerText;
+			var sp = document.getElementById('vCaptainSelection').getElementsByTagName('span')[0];
+			sp.innerText = vCaptain;
 			for(let i = 0; i < mCustomTeam.length; i++) {
 				if(mCustomTeam[i].name == vCaptain) {
 					mCustomTeam[i].points = 1.5;
@@ -439,9 +456,48 @@ if(!isset($_SESSION['id'])) {
 					mCustomTeam[i].points = 1;
 				}
 			}
-			console.log(mCustomTeam);
 		}
+		function teamPreview() {
+			document.getElementById('heading').innerHTML = "Your Team";
+			document.getElementById('vCaptainSelection').style.display = "none";
 
+			var team = document.createElement('div');
+			team.setAttribute("class","capSelect");
+
+			var tbl = document.createElement('table');
+			var backVCSelection = document.createElement('button');
+			var cnfTeam = document.createElement('button');
+
+			var txt = '<thead><th>S. No.</th><th>Player</th></thead><tbody>'
+			for(let i = 0; i < mCustomTeam.length; i++) {
+				let player = mCustomTeam[i];
+				txt += ('<tr><td>' + (i+1) + '</td><td>' + player.name );
+				if(player.points == 1.5) {
+					txt += ' (Vice-Captain)';
+				}
+				else if (player.points == 2) {
+					txt += ' (Captain)';
+				}
+				txt += '</td></tr>';
+			}
+			txt += '</tbody>';
+			tbl.innerHTML = txt;
+			backVCSelection.innerText = "Back";
+			cnfTeam.innerText = "Confirm Team";
+			backVCSelection.style.float = "left";
+			cnfTeam.style.float = "right";
+
+			team.appendChild(tbl);
+			team.appendChild(backVCSelection);
+			team.appendChild(cnfTeam);
+
+			backVCSelection.addEventListener("click",function() {
+				team.remove();
+				document.getElementById('vCaptainSelection').style.display = "block";
+			});
+
+			targetPlayers.appendChild(team);
+		}
 	</script>
 </body>
 </html>

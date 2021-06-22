@@ -49,6 +49,9 @@
 			width: 48%;
 			margin: 0% 1%;
 		}
+		.container > div > div {
+			overflow: auto;
+		}
 		table,tr,td,th {
 			border: 1px solid #000;
 			border-collapse: collapse;
@@ -56,6 +59,9 @@
 		th,td {
 			padding: 5px;
 
+		}
+		p {
+			width: 100%;
 		}
 		tr > td:nth-child(4) {
 			text-align: center;
@@ -97,47 +103,52 @@
 
 		<h2>Clickable Table</h2>
 		<div class="loaderSpin"></div>
-		<p>Aim: Clicking any row should copy the entire row to a new table. Clicking it back should remove it from the new table</p>
-		<table>
-			<thead>
-				<th>S. No.</th>
-				<th>Player Name</th>
-				<th colspan="2">Credit Value</th>
-			</thead>
-			<tbody>
-				<tr onclick="myfunction(this);">
-					<td>1</td>
-					<td>S Ganguli</td>
-					<td>9.7</td>
-					<td class="sign">+</td>
-				</tr>
-				<tr onclick="myfunction(this);">
-					<td>2</td>
-					<td>MS Dhoni</td>
-					<td>12.0</td>
-					<td class="sign">+</td>
-				</tr>
-				<tr onclick="myfunction(this);">
-					<td>3</td>
-					<td>HB Singh</td>
-					<td>11.3</td>
-					<td class="sign">+</td>
-				</tr>
-				<tr onclick="myfunction(this);">
-					<td>4</td>
-					<td>D Karthik</td>
-					<td>10.7</td>
-					<td class="sign">+</td>
-				</tr>
-				<tr onclick="myfunction(this);">
-					<td>5</td>
-					<td>V Sehwag</td>
-					<td>11.8</td>
-					<td class="sign">+</td>
-				</tr>
-			</tbody>
-		</table>
-		<table id="result"></table>
+		<div>
+			<div>
+				<table>
+					<thead>
+						<th>S. No.</th>
+						<th>Player Name</th>
+						<th colspan="2">Credit Value</th>
+					</thead>
+					<tbody>
+						<tr onclick="myfunction(this);">
+							<td>1</td>
+							<td>S Ganguli</td>
+							<td>9.7</td>
+							<td class="sign">+</td>
+						</tr>
+						<tr onclick="myfunction(this);">
+							<td>2</td>
+							<td>MS Dhoni</td>
+							<td>12.0</td>
+							<td class="sign">+</td>
+						</tr>
+						<tr onclick="myfunction(this);">
+							<td>3</td>
+							<td>HB Singh</td>
+							<td>11.3</td>
+							<td class="sign">+</td>
+						</tr>
+						<tr onclick="myfunction(this);">
+							<td>4</td>
+							<td>D Karthik</td>
+							<td>10.7</td>
+							<td class="sign">+</td>
+						</tr>
+						<tr onclick="myfunction(this);">
+							<td>5</td>
+							<td>V Sehwag</td>
+							<td>11.8</td>
+							<td class="sign">+</td>
+						</tr>
+					</tbody>
+				</table>
+				<table id="result"></table>
+			</div>
+			<p>Aim: Clicking any row should copy the entire row to a new table. Clicking it back should remove 
+			it from the new table</p>
+		</div>
 	</div>
 	<script type="text/javascript">
 		var newP = document.getElementById('np');
